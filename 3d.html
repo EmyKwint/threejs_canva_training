@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gravité et Saut 3D</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #111; }
+        canvas { display: block; }
+        #instructions {
+            position: absolute;
+            top: 10px; left: 10px;
+            color: white; font-family: sans-serif;
+            background: rgba(0,0,0,0.6); padding: 12px; border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="instructions">
+        Déplacement : ZQSD / WASD / Flèches<br>
+        Sauter : <b>Espace</b>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+    //Scene
+      const scene = new THREE.Scene(); // création de la scène
+
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000); //(FOV), Ratio (Largeur/Hauteur), Distance Min, Distance Max
+      camera.position.z = 5;
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.shadowMap.enable = true;
+      document.body.appendChild(renderer.domElement);
+
+    //cube
+      const geometry = new THREE.BoxGeometry(1, 1, 1);
+
+      const material = new THREE.MeshStandardMaterial({ color: 0xff0000});
+
+      const cube = new THREE.Mesh(geometry, material);
+      cube.rotation.x = 0.5;
+      cube.rotation.y = 0.5;
+
+      scene.add(cube);
+
+    //ground
+
+    //light
+      const ambiLight = new THREE.AmbientLight(0xffffff, 0.5);
+      scene.add(ambiLight);
+
+      const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+      dirLight.position.set(5, 10, 5);
+      dirLight.castShadow = true;
+      scene.add(dirLight);
+
+      cube.castShadow = true;
+
+    //clock
+    const clock = new THREE.Clock();
+
+    //Functions
+    function rotate(item, rotationSpeed, dt) {
+      item.rotation.y += rotationSpeed * dt;
+      item.rotation.x += rotationSpeed * dt;
+    }
+
+    // SCRIPT
+      function animate() {
+        requestAnimationFrame(animate);
+
+        const dt = clock.getDelta();
+        rotate(cube, 1, dt);
+
+        renderer.render(scene, camera);
+      }
+
+      animate();
+
+    </script>
+</body>
+</html>
